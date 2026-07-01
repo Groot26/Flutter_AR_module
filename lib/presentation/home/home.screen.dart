@@ -1,4 +1,5 @@
 import 'package:ar_demo/domain/models/animal_model.dart';
+import 'package:ar_demo/presentation/ar/ar_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,22 +12,22 @@ class HomeScreen extends GetView<HomeController> {
   static const animals = [
     AnimalModel(
       name: "Cat",
-      modelPath: "https://content.dev.eklavya.me/ar/cat.glb",
+      modelPath: "assets/models/cat.glb",
       icon: Icons.pets_rounded,
     ),
     AnimalModel(
       name: "Tiger",
-      modelPath: "https://content.dev.eklavya.me/ar/tiger.glb",
+      modelPath: "assets/models/tiger.glb",
       icon: Icons.pets,
     ),
     AnimalModel(
       name: "Koi Fish",
-      modelPath: "https://content.dev.eklavya.me/ar/koi_fish.glb",
+      modelPath: "assets/models/koi_fish.glb",
       icon: Icons.water,
     ),
     AnimalModel(
       name: "Ducky",
-      modelPath: "https://content.dev.eklavya.me/ar/ducky.glb",
+      modelPath: "assets/models/ducky.glb",
       icon: CupertinoIcons.sun_dust_fill,
     ),
     AnimalModel(
@@ -36,7 +37,7 @@ class HomeScreen extends GetView<HomeController> {
     ),
     AnimalModel(
       name: "Astronaut",
-      modelPath: "https://modelviewer.dev/shared-assets/models/Astronaut.usdz",
+      modelPath: "assets/models/dinosaur.glb",
       icon: CupertinoIcons.wifi,
     ),
   ];
@@ -61,8 +62,7 @@ class HomeScreen extends GetView<HomeController> {
             return InkWell(
               borderRadius: BorderRadius.circular(20),
               onTap: () {
-                // Navigate to AR Screen
-                // Get.to(() => ARCore());
+                Get.to(() => ARScreen(animal: animal));
               },
               child: Card(
                 elevation: 6,
@@ -86,7 +86,7 @@ class HomeScreen extends GetView<HomeController> {
                       const SizedBox(height: 10),
                       ElevatedButton.icon(
                         onPressed: () {
-                          // Get.to(() => ARCore());
+                          Get.to(() => ARScreen(animal: animal));
                         },
                         icon: const Icon(Icons.view_in_ar),
                         label: const Text("AR"),

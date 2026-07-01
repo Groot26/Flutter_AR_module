@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
 import 'infrastructure/navigation/navigation.dart';
@@ -6,7 +7,7 @@ import 'infrastructure/navigation/routes.dart';
 
 void main() async {
   var initialRoute = await Routes.initialRoute;
-  runApp(Main(initialRoute));
+  runApp(ProviderScope(child: Main(initialRoute)));
 }
 
 class Main extends StatelessWidget {
