@@ -1,5 +1,4 @@
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.plugins.ExtensionAware
 import java.io.File
 
 allprojects {
@@ -22,7 +21,7 @@ subprojects {
 
 subprojects {
     plugins.withId("com.android.library") {
-        val androidExtension = (this as ExtensionAware).extensions.findByType(LibraryExtension::class.java)
+        val androidExtension = project.extensions.findByType(LibraryExtension::class.java)
             ?: return@withId
 
         if (!androidExtension.namespace.isNullOrBlank()) {
