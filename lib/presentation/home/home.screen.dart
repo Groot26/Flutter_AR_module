@@ -1,5 +1,4 @@
 import 'package:ar_demo/domain/models/animal_model.dart';
-import 'package:ar_demo/presentation/ar_ARCore/screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -63,7 +62,7 @@ class HomeScreen extends GetView<HomeController> {
               borderRadius: BorderRadius.circular(20),
               onTap: () {
                 // Navigate to AR Screen
-                Get.to(() => ARCore());
+                // Get.to(() => ARCore());
               },
               child: Card(
                 elevation: 6,
@@ -87,7 +86,7 @@ class HomeScreen extends GetView<HomeController> {
                       const SizedBox(height: 10),
                       ElevatedButton.icon(
                         onPressed: () {
-                          Get.to(() => ARCore());
+                          // Get.to(() => ARCore());
                         },
                         icon: const Icon(Icons.view_in_ar),
                         label: const Text("AR"),
