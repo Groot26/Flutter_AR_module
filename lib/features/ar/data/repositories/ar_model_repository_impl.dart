@@ -19,7 +19,7 @@ class ArModelRepositoryImpl implements ArModelRepository {
     };
 
     return PreparedArModel(
-      nodeUri: cached.fileName,
+      nodeUri: cached.relativeUri,
       renderableType: renderableType,
       initialScale: model.initialScale,
     );

@@ -7,9 +7,14 @@ import 'package:path_provider/path_provider.dart';
 import '../../domain/entities/ar_model_source.dart';
 
 class CachedModelFile {
-  const CachedModelFile({required this.fileName, required this.extension});
+  const CachedModelFile({
+    required this.fileName,
+    required this.relativeUri,
+    required this.extension,
+  });
 
   final String fileName;
+  final String relativeUri;
   final String extension;
 }
 
@@ -25,18 +30,15 @@ class ArModelCacheDataSource {
     final fileName = _buildCacheFileName(source: source, extension: extension);
 
     final appDirectory = await getApplicationDocumentsDirectory();
-    final modelsDirectory = Directory(
-      '${appDirectory.path}${Platform.pathSeparator}ar_models',
-    );
-    if (!await modelsDirectory.exists()) {
-      await modelsDirectory.create(recursive: true);
-    }
-
     final cachedFile = File(
-      '${modelsDirectory.path}${Platform.pathSeparator}$fileName',
+      '${appDirectory.path}${Platform.pathSeparator}$fileName',
     );
     if (await cachedFile.exists()) {
-      return CachedModelFile(fileName: fileName, extension: extension);
+      return CachedModelFile(
+        fileName: fileName,
+        relativeUri: fileName,
+        extension: extension,
+      );
     }
 
     switch (source.type) {
@@ -48,7 +50,11 @@ class ArModelCacheDataSource {
         break;
     }
 
-    return CachedModelFile(fileName: fileName, extension: extension);
+    return CachedModelFile(
+      fileName: fileName,
+      relativeUri: fileName,
+      extension: extension,
+    );
   }
 
   Future<void> _writeAssetToFile(String assetPath, File outputFile) async {
