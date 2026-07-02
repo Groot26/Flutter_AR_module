@@ -50,6 +50,7 @@ class ArFlutterSceneService implements ArSceneService {
     }
 
     sessionManager.onInitialize(
+      showAnimatedGuide: false,
       showFeaturePoints: false,
       showPlanes: true,
       showWorldOrigin: false,
