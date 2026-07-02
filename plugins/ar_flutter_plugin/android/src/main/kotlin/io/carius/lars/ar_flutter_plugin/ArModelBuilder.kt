@@ -194,6 +194,35 @@ class ArModelBuilder {
             // Animation API unavailable on this Sceneform runtime; keep model visible/interactive.
         }
     }
+
+    fun pauseAnimation(nodeName: String): Boolean {
+        return invokeAnimatorMethod(nodeName, "pause")
+    }
+
+    fun resumeAnimation(nodeName: String): Boolean {
+        return invokeAnimatorMethod(nodeName, "resume")
+    }
+
+    fun stopAnimation(nodeName: String): Boolean {
+        val animator = activeAnimators[nodeName] ?: return false
+        return try {
+            animator.javaClass.getMethod("cancel").invoke(animator)
+            activeAnimators.remove(nodeName)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun invokeAnimatorMethod(nodeName: String, methodName: String): Boolean {
+        val animator = activeAnimators[nodeName] ?: return false
+        return try {
+            animator.javaClass.getMethod(methodName).invoke(animator)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
 }
 
 class CustomTransformableNode(transformationSystem: TransformationSystem, objectManagerChannel: MethodChannel, enablePans: Boolean, enableRotation: Boolean) :

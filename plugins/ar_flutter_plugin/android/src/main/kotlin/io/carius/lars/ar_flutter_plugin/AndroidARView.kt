@@ -223,6 +223,21 @@ internal class AndroidARView(
                         }
                     }
 
+                    "pauseAnimation" -> {
+                        val nodeName: String? = call.argument<String>("name")
+                        result.success(nodeName?.let { modelBuilder.pauseAnimation(it) } ?: false)
+                    }
+
+                    "resumeAnimation" -> {
+                        val nodeName: String? = call.argument<String>("name")
+                        result.success(nodeName?.let { modelBuilder.resumeAnimation(it) } ?: false)
+                    }
+
+                    "stopAnimation" -> {
+                        val nodeName: String? = call.argument<String>("name")
+                        result.success(nodeName?.let { modelBuilder.stopAnimation(it) } ?: false)
+                    }
+
                     else -> {}
                 }
             }
@@ -1023,5 +1038,3 @@ internal class AndroidARView(
     }
 
 }
-
-

@@ -18,6 +18,7 @@ class ArFlutterSceneService implements ArSceneService {
 
   ARPlaneAnchor? _currentAnchor;
   ARNode? _currentNode;
+  PreparedArModel? _currentModel;
 
   @override
   bool get isBound =>
@@ -87,9 +88,9 @@ class ArFlutterSceneService implements ArSceneService {
     final node = ARNode(
       type: _toNodeType(model.renderableType),
       uri: model.nodeUri,
+      position: model.initialPositionOffset,
       scale: Vector3.all(model.initialScale),
-      position: Vector3.zero(),
-      rotation: Vector4(1.0, 0.0, 0.0, 0.0),
+      rotation: model.initialRotation,
     );
 
     final didAddNode = await objectManager.addNode(node, planeAnchor: anchor);
@@ -100,6 +101,7 @@ class ArFlutterSceneService implements ArSceneService {
 
     _currentAnchor = anchor;
     _currentNode = node;
+    _currentModel = model;
     return true;
   }
 
@@ -117,11 +119,88 @@ class ArFlutterSceneService implements ArSceneService {
   }
 
   @override
+  Future<bool> rotateCurrentModel(double radiansDelta) async {
+    final node = _currentNode;
+    if (node == null) {
+      return false;
+    }
+
+    final currentRotation = Quaternion.fromRotation(node.rotation);
+    final deltaRotation = Quaternion.axisAngle(Vector3(0.0, 1.0, 0.0), radiansDelta);
+    node.rotationFromQuaternion = deltaRotation * currentRotation;
+    return true;
+  }
+
+  @override
+  Future<bool> moveCurrentModel(Vector3 delta) async {
+    final node = _currentNode;
+    if (node == null) {
+      return false;
+    }
+
+    node.position = node.position + delta;
+    return true;
+  }
+
+  @override
+  Future<bool> setCurrentModelAnimationPlaying(bool playing) async {
+    final node = _currentNode;
+    if (node == null) {
+      return false;
+    }
+
+    final objectManager = _objectManager;
+    final nodeName = node.name;
+    if (objectManager == null || nodeName.isEmpty) {
+      return false;
+    }
+
+    final result =
+        playing
+            ? await objectManager.resumeAnimation(nodeName)
+            : await objectManager.pauseAnimation(nodeName);
+    return result == true;
+  }
+
+  @override
+  Future<bool> stopCurrentModelAnimation() async {
+    final node = _currentNode;
+    final objectManager = _objectManager;
+    if (node == null || objectManager == null || node.name.isEmpty) {
+      return false;
+    }
+
+    return (await objectManager.stopAnimation(node.name)) == true;
+  }
+
+  @override
+  Future<bool> resetCurrentModelTransform() async {
+    final node = _currentNode;
+    final model = _currentModel;
+    if (node == null || model == null) {
+      return false;
+    }
+
+    node.position = model.initialPositionOffset;
+    node.scale = Vector3.all(model.initialScale);
+    node.rotationFromQuaternion = Quaternion.axisAngle(
+      Vector3(
+        model.initialRotation.x,
+        model.initialRotation.y,
+        model.initialRotation.z,
+      ),
+      model.initialRotation.w,
+    );
+    return true;
+  }
+
+  @override
   Future<void> clearPlacedModel() async {
     final anchorManager = _anchorManager;
     final currentAnchor = _currentAnchor;
     final currentNode = _currentNode;
 
+    await stopCurrentModelAnimation();
     if (anchorManager != null && currentAnchor != null) {
       await anchorManager.removeAnchor(currentAnchor);
     } else if (_objectManager != null && currentNode != null) {
@@ -130,6 +209,7 @@ class ArFlutterSceneService implements ArSceneService {
 
     _currentAnchor = null;
     _currentNode = null;
+    _currentModel = null;
   }
 
   @override
@@ -142,6 +222,7 @@ class ArFlutterSceneService implements ArSceneService {
 
   @override
   Future<void> dispose() async {
+    await stopCurrentModelAnimation();
     await _sessionManager?.dispose();
     _sessionManager = null;
     _objectManager = null;

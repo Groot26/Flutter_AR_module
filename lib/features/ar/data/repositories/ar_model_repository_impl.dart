@@ -21,6 +21,8 @@ class ArModelRepositoryImpl implements ArModelRepository {
     return PreparedArModel(
       nodeUri: cached.relativeUri,
       renderableType: renderableType,
+      initialPositionOffset: model.initialPositionOffset,
+      initialRotation: model.initialRotation,
       initialScale: model.initialScale,
     );
   }

@@ -105,6 +105,7 @@ class ArViewController extends StateNotifier<ArViewState> {
     await _sceneService.clearPlacedModel();
     state = state.copyWith(
       isPlaced: false,
+      isAnimationPlaying: false,
       statusMessage: 'Model cleared. Tap on a horizontal plane to place again.',
       clearError: true,
     );
@@ -127,6 +128,7 @@ class ArViewController extends StateNotifier<ArViewState> {
       isPaused: false,
       sessionReady: false,
       isPlaced: false,
+      isAnimationPlaying: false,
       surfaceDetected: false,
       sceneRevision: state.sceneRevision + 1,
       statusMessage: 'Reinitializing AR session...',
@@ -140,6 +142,71 @@ class ArViewController extends StateNotifier<ArViewState> {
     }
     final safeDelta = scaleFactorDelta.clamp(0.7, 1.35).toDouble();
     await _sceneService.scaleCurrentModel(safeDelta);
+  }
+
+  Future<void> zoomIn() async {
+    if (!state.isPlaced) return;
+    await _sceneService.scaleCurrentModel(1.12);
+  }
+
+  Future<void> zoomOut() async {
+    if (!state.isPlaced) return;
+    await _sceneService.scaleCurrentModel(0.89);
+  }
+
+  Future<void> rotateLeft() async {
+    if (!state.isPlaced) return;
+    await _sceneService.rotateCurrentModel(-0.16);
+  }
+
+  Future<void> rotateRight() async {
+    if (!state.isPlaced) return;
+    await _sceneService.rotateCurrentModel(0.16);
+  }
+
+  Future<void> nudgeLeft() async {
+    if (!state.isPlaced) return;
+    await _sceneService.moveCurrentModel(Vector3(-0.02, 0.0, 0.0));
+  }
+
+  Future<void> nudgeRight() async {
+    if (!state.isPlaced) return;
+    await _sceneService.moveCurrentModel(Vector3(0.02, 0.0, 0.0));
+  }
+
+  Future<void> nudgeForward() async {
+    if (!state.isPlaced) return;
+    await _sceneService.moveCurrentModel(Vector3(0.0, 0.0, -0.02));
+  }
+
+  Future<void> nudgeBack() async {
+    if (!state.isPlaced) return;
+    await _sceneService.moveCurrentModel(Vector3(0.0, 0.0, 0.02));
+  }
+
+  Future<void> resetTransform() async {
+    if (!state.isPlaced) return;
+    await _sceneService.resetCurrentModelTransform();
+    state = state.copyWith(
+      statusMessage: 'Model transform reset.',
+      clearError: true,
+    );
+  }
+
+  Future<void> toggleAnimation() async {
+    if (!state.isPlaced) return;
+    final nextPlaying = !state.isAnimationPlaying;
+    final didUpdate = await _sceneService.setCurrentModelAnimationPlaying(
+      nextPlaying,
+    );
+    if (didUpdate) {
+      state = state.copyWith(
+        isAnimationPlaying: nextPlaying,
+        statusMessage:
+            nextPlaying ? 'Animation playing.' : 'Animation paused.',
+        clearError: true,
+      );
+    }
   }
 
   Future<void> _onPlaneTapped(Matrix4 worldTransform) async {
@@ -172,6 +239,7 @@ class ArViewController extends StateNotifier<ArViewState> {
         state = state.copyWith(
           isPlacing: false,
           isPlaced: false,
+          isAnimationPlaying: false,
           errorMessage: 'Unable to place model on this surface.',
           statusMessage: 'Try another horizontal surface.',
         );
@@ -181,14 +249,16 @@ class ArViewController extends StateNotifier<ArViewState> {
       state = state.copyWith(
         isPlacing: false,
         isPlaced: true,
+        isAnimationPlaying: true,
         statusMessage:
-            'Model placed. Use drag to reposition, rotate gesture to rotate, and pinch to scale.',
+            'Model placed. Use drag to reposition, rotate gesture to rotate, pinch to scale, or the toolbar for more controls.',
         clearError: true,
       );
     } catch (error) {
       state = state.copyWith(
         isPlacing: false,
         isPlaced: false,
+        isAnimationPlaying: false,
         errorMessage: error.toString(),
         statusMessage: 'Model placement failed.',
       );
