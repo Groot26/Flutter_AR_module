@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture
 import android.net.Uri
 import android.view.Gravity
 import android.widget.Toast
+import android.animation.ValueAnimator
 import com.google.ar.core.*
 import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.FrameTime
@@ -32,6 +33,7 @@ import java.security.AccessController
 
 // Responsible for creating Renderables and Nodes
 class ArModelBuilder {
+    private val activeAnimators: MutableMap<String, Any> = mutableMapOf()
 
     // Creates feature point node
     fun makeFeaturePointNode(context: Context, xPos: Float, yPos: Float, zPos: Float): Node {
@@ -111,6 +113,7 @@ class ArModelBuilder {
                     gltfNode.worldScale = transform.first
                     gltfNode.worldPosition = transform.second
                     gltfNode.worldRotation = transform.third
+                    startDefaultAnimation(gltfNode, renderable)
                     completableFutureNode.complete(gltfNode)
                 }
                 .exceptionally { throwable ->
@@ -153,6 +156,7 @@ class ArModelBuilder {
                     gltfNode.worldScale = transform.first
                     gltfNode.worldPosition = transform.second
                     gltfNode.worldRotation = transform.third
+                    startDefaultAnimation(gltfNode, renderable)
                     completableFutureNode.complete(gltfNode)
                 }
                 .exceptionally{throwable ->
@@ -161,6 +165,34 @@ class ArModelBuilder {
                 }
 
         return completableFutureNode
+    }
+
+    private fun startDefaultAnimation(node: CustomTransformableNode, renderable: ModelRenderable) {
+        val animationCount = renderable.getAnimationDataCount()
+        if (animationCount <= 0) {
+            return
+        }
+
+        try {
+            // Sceneform animation support depends on the concrete Sceneform runtime.
+            // We use reflection to keep compatibility across older/newer variants.
+            val animationData = renderable.getAnimationData(0)
+            val animatorClass = Class.forName("com.google.ar.sceneform.animation.ModelAnimator")
+            val ofAnimation = animatorClass.getMethod(
+                "ofAnimation",
+                ModelRenderable::class.java,
+                AnimationData::class.java
+            )
+            val animator = ofAnimation.invoke(null, renderable, animationData) ?: return
+            runCatching {
+                animatorClass.getMethod("setRepeatCount", Int::class.javaPrimitiveType)
+                    .invoke(animator, ValueAnimator.INFINITE)
+            }
+            animatorClass.getMethod("start").invoke(animator)
+            activeAnimators[node.name ?: animationData.getName()] = animator
+        } catch (_: Exception) {
+            // Animation API unavailable on this Sceneform runtime; keep model visible/interactive.
+        }
     }
 }
 
@@ -175,10 +207,9 @@ class CustomTransformableNode(transformationSystem: TransformationSystem, object
         // Remove standard controllers
         translationController.isEnabled = false
         rotationController.isEnabled = false
-        scaleController.isEnabled = false
+        scaleController.isEnabled = true
         removeTransformationController(translationController)
         removeTransformationController(rotationController)
-        removeTransformationController(scaleController)
 
 
         // Add custom controllers if needed

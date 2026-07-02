@@ -74,7 +74,6 @@ class _ARScreenState extends ConsumerState<ARScreen>
           ArSceneView(
             sceneRevision: viewState.sceneRevision,
             onManagersCreated: controller.onArViewCreated,
-            onScaleGesture: controller.onScaleGesture,
           ),
           ArStatusOverlay(state: viewState),
         ],

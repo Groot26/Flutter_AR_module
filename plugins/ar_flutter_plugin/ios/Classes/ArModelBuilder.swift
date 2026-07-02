@@ -78,6 +78,7 @@ class ArModelBuilder: NSObject {
             if let transform = transformation {
                 node.transform = deserializeMatrix4(transform)
             }
+            playDefaultAnimationRecursively(in: node)
 
             return node
         } catch {
@@ -107,6 +108,7 @@ class ArModelBuilder: NSObject {
             if let transform = transformation {
                 node.transform = deserializeMatrix4(transform)
             }
+            playDefaultAnimationRecursively(in: node)
 
             return node
         } catch {
@@ -136,6 +138,7 @@ class ArModelBuilder: NSObject {
             if let transform = transformation {
                 node.transform = deserializeMatrix4(transform)
             }
+            playDefaultAnimationRecursively(in: node)
 
             return node
         } catch {
@@ -181,6 +184,9 @@ class ArModelBuilder: NSObject {
                             if let transform = transformation {
                                 node?.transform = deserializeMatrix4(transform)
                             }
+                            if let node = node {
+                                self.playDefaultAnimationRecursively(in: node)
+                            }
                             /*node?.scale = worldScale
                             node?.position = worldPosition
                             node?.worldOrientation = worldRotation*/
@@ -199,7 +205,22 @@ class ArModelBuilder: NSObject {
                         promise(.success(node))
                     }
                 }
-                
+
+                private func playDefaultAnimationRecursively(in node: SCNNode) {
+                    for key in node.animationKeys {
+                        if let player = node.animationPlayer(forKey: key) {
+                            player.animation.repeatCount = .greatestFiniteMagnitude
+                            player.play()
+                        } else if let animation = node.animation(forKey: key) {
+                            animation.repeatCount = .greatestFiniteMagnitude
+                            node.addAnimation(animation, forKey: key)
+                        }
+                    }
+                    for child in node.childNodes {
+                        playDefaultAnimationRecursively(in: child)
+                    }
+                }
+     
             }
             
     

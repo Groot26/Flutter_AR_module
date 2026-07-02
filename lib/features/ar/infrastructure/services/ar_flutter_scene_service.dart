@@ -155,22 +155,17 @@ class ArFlutterSceneService implements ArSceneService {
     ArSceneErrorCallback onError,
   ) async {
     ARHitTestResult? planeResult;
-    ARHitTestResult? pointResult;
     for (final hit in hitResults) {
       if (hit.type == ARHitTestResultType.plane) {
         planeResult = hit;
         break;
       }
-      if (pointResult == null && hit.type == ARHitTestResultType.point) {
-        pointResult = hit;
-      }
     }
-    final selectedResult = planeResult ?? pointResult;
-    if (selectedResult == null) {
+    if (planeResult == null) {
       onError('No horizontal surface detected. Move device and tap again.');
       return;
     }
-    await onPlaneTapped(selectedResult.worldTransform);
+    await onPlaneTapped(planeResult.worldTransform);
   }
 
   NodeType _toNodeType(ArRenderableType type) {
