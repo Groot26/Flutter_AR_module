@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -112,6 +113,9 @@ class ArViewController extends StateNotifier<ArViewState> {
   }
 
   Future<void> onPause() async {
+    debugPrint(
+      '================================== Pause =====================',
+    );
     await _sceneService.pause();
     _hasSceneInitialization = false;
     state = state.copyWith(
@@ -122,6 +126,10 @@ class ArViewController extends StateNotifier<ArViewState> {
   }
 
   Future<void> onResume() async {
+    debugPrint(
+      '================================== Resume =====================',
+    );
+
     await _sceneService.resume();
     _hasSceneInitialization = false;
     state = state.copyWith(
@@ -145,11 +153,17 @@ class ArViewController extends StateNotifier<ArViewState> {
   }
 
   Future<void> zoomIn() async {
+    debugPrint(
+      '================================== ZoomIn =====================',
+    );
     if (!state.isPlaced) return;
     await _sceneService.scaleCurrentModel(1.12);
   }
 
   Future<void> zoomOut() async {
+    debugPrint(
+      '================================== ZoomOut =====================',
+    );
     if (!state.isPlaced) return;
     await _sceneService.scaleCurrentModel(0.89);
   }
@@ -202,15 +216,20 @@ class ArViewController extends StateNotifier<ArViewState> {
     if (didUpdate) {
       state = state.copyWith(
         isAnimationPlaying: nextPlaying,
-        statusMessage:
-            nextPlaying ? 'Animation playing.' : 'Animation paused.',
+        statusMessage: nextPlaying ? 'Animation playing.' : 'Animation paused.',
         clearError: true,
       );
     }
   }
 
   Future<void> _onPlaneTapped(Matrix4 worldTransform) async {
+    debugPrint(
+      '================================== On Tap =====================',
+    );
     if (state.isBusy || !_hasSceneInitialization) {
+      return;
+    }
+    if (state.isPlaced) {
       return;
     }
 

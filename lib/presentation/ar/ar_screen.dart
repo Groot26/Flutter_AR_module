@@ -78,22 +78,24 @@ class _ARScreenState extends ConsumerState<ARScreen>
             onManagersCreated: controller.onArViewCreated,
           ),
           ArStatusOverlay(state: viewState),
-          if (viewState.isPlaced)
-            ArModelControlsOverlay(
-              state: viewState,
-              onToggleAnimation: controller.toggleAnimation,
-              onZoomIn: controller.zoomIn,
-              onZoomOut: controller.zoomOut,
-              onRotateLeft: controller.rotateLeft,
-              onRotateRight: controller.rotateRight,
-              onNudgeLeft: controller.nudgeLeft,
-              onNudgeRight: controller.nudgeRight,
-              onNudgeForward: controller.nudgeForward,
-              onNudgeBack: controller.nudgeBack,
-              onResetTransform: controller.resetTransform,
-            ),
         ],
       ),
+      bottomSheet:
+          viewState.isPlaced
+              ? ArModelControlsOverlay(
+                state: viewState,
+                onToggleAnimation: controller.toggleAnimation,
+                onZoomIn: controller.zoomIn,
+                onZoomOut: controller.zoomOut,
+                onRotateLeft: controller.rotateLeft,
+                onRotateRight: controller.rotateRight,
+                onNudgeLeft: controller.nudgeLeft,
+                onNudgeRight: controller.nudgeRight,
+                onNudgeForward: controller.nudgeForward,
+                onNudgeBack: controller.nudgeBack,
+                onResetTransform: controller.resetTransform,
+              )
+              : null,
       floatingActionButton:
           viewState.isPlaced
               ? FloatingActionButton.small(
