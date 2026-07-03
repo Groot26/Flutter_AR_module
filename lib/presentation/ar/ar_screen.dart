@@ -2,12 +2,13 @@ import 'package:ar_demo/domain/models/animal_model.dart';
 import 'package:ar_demo/features/ar/domain/entities/ar_model_source.dart';
 import 'package:ar_demo/features/ar/domain/entities/ar_placeable_model.dart';
 import 'package:ar_demo/features/ar/presentation/providers/ar_module_providers.dart';
-import 'package:ar_demo/features/ar/presentation/widgets/ar_model_controls_overlay.dart';
 import 'package:ar_demo/features/ar/presentation/widgets/ar_scene_view.dart';
 import 'package:ar_demo/features/ar/presentation/widgets/ar_status_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vector_math/vector_math_64.dart';
+
+import '../../features/ar/presentation/widgets/ar_model_controls_overlay.dart';
 
 class ARScreen extends ConsumerStatefulWidget {
   const ARScreen({super.key, required this.animal});
@@ -79,26 +80,18 @@ class _ARScreenState extends ConsumerState<ARScreen>
           ),
           ArStatusOverlay(state: viewState),
           if (viewState.isPlaced)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: IgnorePointer(
-                ignoring: false,
-                child: ArModelControlsOverlay(
-                  state: viewState,
-                  onToggleAnimation: controller.toggleAnimation,
-                  onZoomIn: controller.zoomIn,
-                  onZoomOut: controller.zoomOut,
-                  onRotateLeft: controller.rotateLeft,
-                  onRotateRight: controller.rotateRight,
-                  onNudgeLeft: controller.nudgeLeft,
-                  onNudgeRight: controller.nudgeRight,
-                  onNudgeForward: controller.nudgeForward,
-                  onNudgeBack: controller.nudgeBack,
-                  onResetTransform: controller.resetTransform,
-                ),
-              ),
+            ArModelControlsOverlay(
+              state: viewState,
+              onToggleAnimation: controller.toggleAnimation,
+              onZoomIn: controller.zoomIn,
+              onZoomOut: controller.zoomOut,
+              onRotateLeft: controller.rotateLeft,
+              onRotateRight: controller.rotateRight,
+              onNudgeLeft: controller.nudgeLeft,
+              onNudgeRight: controller.nudgeRight,
+              onNudgeForward: controller.nudgeForward,
+              onNudgeBack: controller.nudgeBack,
+              onResetTransform: controller.resetTransform,
             ),
         ],
       ),
