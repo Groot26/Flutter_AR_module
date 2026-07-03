@@ -78,24 +78,30 @@ class _ARScreenState extends ConsumerState<ARScreen>
             onManagersCreated: controller.onArViewCreated,
           ),
           ArStatusOverlay(state: viewState),
+          if (viewState.isPlaced)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IgnorePointer(
+                ignoring: false,
+                child: ArModelControlsOverlay(
+                  state: viewState,
+                  onToggleAnimation: controller.toggleAnimation,
+                  onZoomIn: controller.zoomIn,
+                  onZoomOut: controller.zoomOut,
+                  onRotateLeft: controller.rotateLeft,
+                  onRotateRight: controller.rotateRight,
+                  onNudgeLeft: controller.nudgeLeft,
+                  onNudgeRight: controller.nudgeRight,
+                  onNudgeForward: controller.nudgeForward,
+                  onNudgeBack: controller.nudgeBack,
+                  onResetTransform: controller.resetTransform,
+                ),
+              ),
+            ),
         ],
       ),
-      bottomSheet:
-          viewState.isPlaced
-              ? ArModelControlsOverlay(
-                state: viewState,
-                onToggleAnimation: controller.toggleAnimation,
-                onZoomIn: controller.zoomIn,
-                onZoomOut: controller.zoomOut,
-                onRotateLeft: controller.rotateLeft,
-                onRotateRight: controller.rotateRight,
-                onNudgeLeft: controller.nudgeLeft,
-                onNudgeRight: controller.nudgeRight,
-                onNudgeForward: controller.nudgeForward,
-                onNudgeBack: controller.nudgeBack,
-                onResetTransform: controller.resetTransform,
-              )
-              : null,
       floatingActionButton:
           viewState.isPlaced
               ? FloatingActionButton.small(
@@ -155,9 +161,9 @@ class _ArModelMetadata {
     double? initialScale,
     Vector4? initialRotation,
     Vector3? initialPositionOffset,
-  })  : initialScale = initialScale ?? 0.22,
-        initialRotation = initialRotation ?? Vector4(1.0, 0.0, 0.0, 0.0),
-        initialPositionOffset = initialPositionOffset ?? Vector3.zero();
+  }) : initialScale = initialScale ?? 0.22,
+       initialRotation = initialRotation ?? Vector4(1.0, 0.0, 0.0, 0.0),
+       initialPositionOffset = initialPositionOffset ?? Vector3.zero();
 
   final double initialScale;
   final Vector4 initialRotation;

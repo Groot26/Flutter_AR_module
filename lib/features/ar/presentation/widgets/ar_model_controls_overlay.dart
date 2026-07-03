@@ -32,11 +32,13 @@ class ArModelControlsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+    return Positioned(
+      left: 12,
+      right: 12,
+      bottom: 12,
+      child: SafeArea(
+        top: false,
+        child: Center(
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.52),
