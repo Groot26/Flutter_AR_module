@@ -145,4 +145,16 @@ class ARObjectManager {
   removeNode(ARNode node) {
     _channel.invokeMethod<String>('removeNode', {'name': node.name});
   }
+
+  Future<bool?> pauseAnimation(String nodeName) async {
+    return await _channel.invokeMethod<bool>('pauseAnimation', {'name': nodeName});
+  }
+
+  Future<bool?> resumeAnimation(String nodeName) async {
+    return await _channel.invokeMethod<bool>('resumeAnimation', {'name': nodeName});
+  }
+
+  Future<bool?> stopAnimation(String nodeName) async {
+    return await _channel.invokeMethod<bool>('stopAnimation', {'name': nodeName});
+  }
 }

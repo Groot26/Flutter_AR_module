@@ -6,6 +6,7 @@ class ArViewState {
     required this.isLoading,
     required this.isPlacing,
     required this.isPlaced,
+    required this.isAnimationPlaying,
     required this.isPaused,
     required this.sceneRevision,
     this.statusMessage,
@@ -20,6 +21,7 @@ class ArViewState {
       isLoading: false,
       isPlacing: false,
       isPlaced: false,
+      isAnimationPlaying: false,
       isPaused: false,
       sceneRevision: 0,
       statusMessage: 'Initializing AR module...',
@@ -32,6 +34,7 @@ class ArViewState {
   final bool isLoading;
   final bool isPlacing;
   final bool isPlaced;
+  final bool isAnimationPlaying;
   final bool isPaused;
   final int sceneRevision;
   final String? statusMessage;
@@ -46,6 +49,7 @@ class ArViewState {
     bool? isLoading,
     bool? isPlacing,
     bool? isPlaced,
+    bool? isAnimationPlaying,
     bool? isPaused,
     int? sceneRevision,
     String? statusMessage,
@@ -59,6 +63,7 @@ class ArViewState {
       isLoading: isLoading ?? this.isLoading,
       isPlacing: isPlacing ?? this.isPlacing,
       isPlaced: isPlaced ?? this.isPlaced,
+      isAnimationPlaying: isAnimationPlaying ?? this.isAnimationPlaying,
       isPaused: isPaused ?? this.isPaused,
       sceneRevision: sceneRevision ?? this.sceneRevision,
       statusMessage: statusMessage ?? this.statusMessage,

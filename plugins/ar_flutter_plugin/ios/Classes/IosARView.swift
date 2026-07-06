@@ -139,6 +139,27 @@ class IosARView: NSObject, FlutterPlatformView, ARSCNViewDelegate, UIGestureReco
                     sceneView.scene.rootNode.childNode(withName: name, recursively: true)?.removeFromParentNode()
                 }
                 break
+            case "pauseAnimation":
+                if let name = arguments!["name"] as? String {
+                    result(setAnimationPlayback(nodeName: name, play: false))
+                } else {
+                    result(false)
+                }
+                break
+            case "resumeAnimation":
+                if let name = arguments!["name"] as? String {
+                    result(setAnimationPlayback(nodeName: name, play: true))
+                } else {
+                    result(false)
+                }
+                break
+            case "stopAnimation":
+                if let name = arguments!["name"] as? String {
+                    result(stopAnimations(nodeName: name))
+                } else {
+                    result(false)
+                }
+                break
             case "transformationChanged":
                 if let name = arguments!["name"] as? String, let transform = arguments!["transformation"] as? Array<NSNumber> {
                     transformNode(name: name, transform: transform)
@@ -149,6 +170,58 @@ class IosARView: NSObject, FlutterPlatformView, ARSCNViewDelegate, UIGestureReco
                 result(FlutterMethodNotImplemented)
                 break
         }
+    }
+
+    private func setAnimationPlayback(nodeName: String, play: Bool) -> Bool {
+        guard let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) else {
+            return false
+        }
+        return setAnimationPlaybackRecursively(node: node, play: play)
+    }
+
+    private func setAnimationPlaybackRecursively(node: SCNNode, play: Bool) -> Bool {
+        var didChange = false
+        for key in node.animationKeys {
+            if let player = node.animationPlayer(forKey: key) {
+                if play {
+                    player.play()
+                } else {
+                    player.pause()
+                }
+                didChange = true
+            } else if let animation = node.animation(forKey: key) {
+                if play {
+                    node.addAnimation(animation, forKey: key)
+                    node.animationPlayer(forKey: key)?.play()
+                } else {
+                    node.pauseAnimation(forKey: key)
+                }
+                didChange = true
+            }
+        }
+        for child in node.childNodes {
+            didChange = setAnimationPlaybackRecursively(node: child, play: play) || didChange
+        }
+        return didChange
+    }
+
+    private func stopAnimations(nodeName: String) -> Bool {
+        guard let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) else {
+            return false
+        }
+        return stopAnimationsRecursively(node: node)
+    }
+
+    private func stopAnimationsRecursively(node: SCNNode) -> Bool {
+        var didChange = false
+        for key in node.animationKeys {
+            node.removeAnimation(forKey: key, blendOutDuration: 0.1)
+            didChange = true
+        }
+        for child in node.childNodes {
+            didChange = stopAnimationsRecursively(node: child) || didChange
+        }
+        return didChange
     }
 
     func onAnchorMethodCalled(_ call :FlutterMethodCall, _ result: @escaping FlutterResult) {

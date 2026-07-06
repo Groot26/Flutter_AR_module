@@ -12,32 +12,38 @@ class HomeScreen extends GetView<HomeController> {
   static const animals = [
     AnimalModel(
       name: "Cat",
-      modelPath: "assets/models/cat.glb",
+      // modelPath: "assets/models/cat.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/cat.glb",
       icon: Icons.pets_rounded,
     ),
     AnimalModel(
       name: "Tiger",
-      modelPath: "assets/models/tiger.glb",
+      // modelPath: "assets/models/tiger.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/tiger.glb",
       icon: Icons.pets,
     ),
     AnimalModel(
       name: "Koi Fish",
-      modelPath: "assets/models/koi_fish.glb",
+      // modelPath: "assets/models/koi_fish.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/koi_fish.glb",
       icon: Icons.water,
     ),
     AnimalModel(
       name: "Ducky",
-      modelPath: "assets/models/ducky.glb",
+      // modelPath: "assets/models/ducky.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/ducky.glb",
       icon: CupertinoIcons.sun_dust_fill,
     ),
     AnimalModel(
       name: "Ducky",
-      modelPath: "assets/models/ducky_textured.glb",
+      // modelPath: "assets/models/ducky_textured.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/ducky_textured.glb",
       icon: CupertinoIcons.sun_dust_fill,
     ),
     AnimalModel(
       name: "Astronaut",
-      modelPath: "assets/models/dinosaur.glb",
+      // modelPath: "assets/models/dinosaur.glb",
+      modelPath: "https://content.dev.eklavya.me/ar/dinosaur.glb",
       icon: CupertinoIcons.wifi,
     ),
   ];

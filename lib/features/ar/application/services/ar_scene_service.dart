@@ -34,6 +34,16 @@ abstract class ArSceneService {
 
   Future<bool> scaleCurrentModel(double scaleFactorDelta);
 
+  Future<bool> rotateCurrentModel(double radiansDelta);
+
+  Future<bool> moveCurrentModel(Vector3 delta);
+
+  Future<bool> setCurrentModelAnimationPlaying(bool playing);
+
+  Future<bool> stopCurrentModelAnimation();
+
+  Future<bool> resetCurrentModelTransform();
+
   Future<void> clearPlacedModel();
 
   Future<void> pause();

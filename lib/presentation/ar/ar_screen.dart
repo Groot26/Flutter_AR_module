@@ -6,6 +6,9 @@ import 'package:ar_demo/features/ar/presentation/widgets/ar_scene_view.dart';
 import 'package:ar_demo/features/ar/presentation/widgets/ar_status_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vector_math/vector_math_64.dart';
+
+import '../../features/ar/presentation/widgets/ar_model_controls_overlay.dart';
 
 class ARScreen extends ConsumerStatefulWidget {
   const ARScreen({super.key, required this.animal});
@@ -74,9 +77,22 @@ class _ARScreenState extends ConsumerState<ARScreen>
           ArSceneView(
             sceneRevision: viewState.sceneRevision,
             onManagersCreated: controller.onArViewCreated,
-            onScaleGesture: controller.onScaleGesture,
           ),
           ArStatusOverlay(state: viewState),
+          if (viewState.isPlaced)
+            ArModelControlsOverlay(
+              state: viewState,
+              onToggleAnimation: controller.toggleAnimation,
+              onZoomIn: controller.zoomIn,
+              onZoomOut: controller.zoomOut,
+              onRotateLeft: controller.rotateLeft,
+              onRotateRight: controller.rotateRight,
+              onNudgeLeft: controller.nudgeLeft,
+              onNudgeRight: controller.nudgeRight,
+              onNudgeForward: controller.nudgeForward,
+              onNudgeBack: controller.nudgeBack,
+              onResetTransform: controller.resetTransform,
+            ),
         ],
       ),
       floatingActionButton:
@@ -99,10 +115,50 @@ class _ARScreenState extends ConsumerState<ARScreen>
       cacheKey: animal.name.toLowerCase().replaceAll(' ', '_'),
     );
 
+    final metadata = _modelMetadata(animal.name);
     return ArPlaceableModel(
       id: animal.name.toLowerCase().replaceAll(' ', '_'),
       displayName: animal.name,
       source: source,
+      initialScale: metadata.initialScale,
+      initialRotation: metadata.initialRotation,
+      initialPositionOffset: metadata.initialPositionOffset,
     );
   }
+
+  _ArModelMetadata _modelMetadata(String name) {
+    switch (name.toLowerCase()) {
+      case 'cat':
+        return _ArModelMetadata(
+          initialScale: 0.12,
+          initialRotation: Vector4(1.0, 0.0, 0.0, 1.57079632679),
+        );
+      case 'tiger':
+        return _ArModelMetadata(
+          initialScale: 0.10,
+          initialRotation: Vector4(1.0, 0.0, 0.0, 1.57079632679),
+        );
+      case 'koi fish':
+        return _ArModelMetadata(initialScale: 0.18);
+      case 'ducky':
+      case 'astronaut':
+        return _ArModelMetadata(initialScale: 0.16);
+      default:
+        return _ArModelMetadata();
+    }
+  }
+}
+
+class _ArModelMetadata {
+  _ArModelMetadata({
+    double? initialScale,
+    Vector4? initialRotation,
+    Vector3? initialPositionOffset,
+  }) : initialScale = initialScale ?? 0.22,
+       initialRotation = initialRotation ?? Vector4(1.0, 0.0, 0.0, 0.0),
+       initialPositionOffset = initialPositionOffset ?? Vector3.zero();
+
+  final double initialScale;
+  final Vector4 initialRotation;
+  final Vector3 initialPositionOffset;
 }

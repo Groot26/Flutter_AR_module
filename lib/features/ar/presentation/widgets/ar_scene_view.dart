@@ -18,46 +18,22 @@ class ArSceneView extends StatefulWidget {
     super.key,
     required this.sceneRevision,
     required this.onManagersCreated,
-    required this.onScaleGesture,
   });
 
   final int sceneRevision;
   final ArManagersCreatedCallback onManagersCreated;
-  final ValueChanged<double> onScaleGesture;
 
   @override
   State<ArSceneView> createState() => _ArSceneViewState();
 }
 
 class _ArSceneViewState extends State<ArSceneView> {
-  double _lastScale = 1.0;
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ARView(
-          key: ValueKey<int>(widget.sceneRevision),
-          planeDetectionConfig: PlaneDetectionConfig.horizontal,
-          onARViewCreated: _onArViewCreated,
-        ),
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onScaleStart: (_) {
-              _lastScale = 1.0;
-            },
-            onScaleUpdate: (details) {
-              if (details.pointerCount < 2) {
-                return;
-              }
-              final delta = details.scale / _lastScale;
-              _lastScale = details.scale;
-              widget.onScaleGesture(delta);
-            },
-          ),
-        ),
-      ],
+    return ARView(
+      key: ValueKey<int>(widget.sceneRevision),
+      planeDetectionConfig: PlaneDetectionConfig.horizontal,
+      onARViewCreated: _onArViewCreated,
     );
   }
 
